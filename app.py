@@ -181,7 +181,7 @@ if st.button("Submit"):
     elif sortby == '' and how != '':  # Check if sortby is selected but how is empty
         st.warning("⚠️ If you selected a How, then please select Sort Value. 😊")
     else:
-        st.subheader(f"{batter} vs {bowler} in IPL")
+        st.text(f"{batter} vs {bowler} in IPL")
 
 
         # Define the function to display Batter vs Bowler stats
