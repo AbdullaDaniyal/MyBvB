@@ -73,7 +73,7 @@ def BAV(runs, outs):
 # Define some useful lists for the dropdowns
 btl = sorted(list(df['striker'].unique()))
 pcl = sorted(list(df['bowler'].unique()))
-srtb = sorted(list(['Innings', 'Runs', 'Balls', 'Outs', 'Dots', '4s', '6s', 'Strike Rate']))
+srtb = list(['Innings', 'Runs', 'Balls', 'Outs', 'Dots', '4s', '6s', 'Strike Rate'])
 srth = list(['Descending', 'Ascending'])
 
 # Apply custom CSS to style the app
