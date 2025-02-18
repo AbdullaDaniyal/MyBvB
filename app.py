@@ -61,7 +61,7 @@ df.head(2)
 df['b_runs'] = (df['runs_off_bat'] + df['wides'].fillna(0) + df['noballs'].fillna(0))
 df.head(2)
 
-df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy', 'Z Khan': 'Zaheer Khan'}, inplace=True)
+df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy', 'Z Khan': 'Zaheer Khan','JJ Bumrah':'Jasprit Bumrah'}, inplace=True)
 
 # Function to calculate batting average (BAV)
 def BAV(runs, outs):
@@ -261,7 +261,7 @@ if advanced_search:
                 df = pd.concat([df, totals_df], ignore_index=True)  #
 
                 # Return the final dataframe with results
-                df = df.style.set_caption('Download this Data Below :').format(
+                df = df.style.set_caption('Download This Data Below :').format(
             {'Strike Rate': '{:.1f}', 'Avg': lambda x: f'{x:.1f}' if isinstance(x, (int, float)) else '-'}
         ).apply(lambda x: ['background-color: blue']*len(x) if x.name == df.index[-1] else [''] * len(x), axis=1)
 
@@ -297,7 +297,7 @@ else:
                         '6s': ['-'],
                         'Strike Rate': ['-'],
                         'Avg': ['-']
-                    }).style.set_caption(f'{batter} vs {bowler} in IPL').apply(
+                    }).style.set_caption('Not Faced Each Other').apply(
                         lambda x: ['background-color: red']*len(x) if x.name == df1.index[-1] else ['']*len(x), axis=1)
                     
                     return df1
@@ -336,7 +336,7 @@ else:
                 df = pd.concat([df, pd.DataFrame([totals])], ignore_index=True)
 
 
-                df = df.style.set_caption(batter+ ' vs ' +bowler+ ' in IPL').format(
+                df = df.style.set_caption('Download This Data Below:').format(
                     {'Strike Rate': '{:.1f}', 'Avg': lambda x: f'{x:.1f}' if isinstance(x, (int, float)) else '-'}
                 ).apply(lambda x: ['background-color: blue']*len(x) if x.name == df.index[-1] else [''] * len(x), axis=1)
 
