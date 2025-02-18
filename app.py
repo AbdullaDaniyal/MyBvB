@@ -159,18 +159,18 @@ with col1:
 with col2:
     bowler = st.selectbox("**Select Bowler:**", [''] + pcl, index=0)
 
-advanced_search = st.checkbox("Check here for advanced search")
+advanced_search = st.checkbox("Click here for advanced search")
 
 if advanced_search:
     col3, col4 = st.columns([1, 1])
 
     with col3:
-        st.markdown("Select Sort Value: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
-        sortby = st.selectbox("", [None] + srtb, index=0, label_visibility="collapsed")
+        # st.markdown("Select Sort Value: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
+        sortby = st.selectbox("**Select Sort Value:**", [None] + srtb, index=0)
 
     with col4:
-        st.markdown("Select How: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
-        how = st.selectbox("", [None] + srth, index=0, label_visibility="collapsed")
+        # st.markdown("Select How: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
+        how = st.selectbox("**Select How:**", [None] + srth, index=0)
 
 
 # Submit button logic
