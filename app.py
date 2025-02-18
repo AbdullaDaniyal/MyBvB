@@ -346,4 +346,4 @@ else:
 
             final_df = BvB(df, batter, bowler).data
             csv = final_df.to_csv(index=False)
-            st.download_button("Download CSV", data=csv, file_name=f"{batter}_vs_{bowler}_IPL.csv", mime="text/csv") 
+            st.download_button("Download CSV", data=csv, file_name= batter+"_vs_"+bowler+"_IPL.csv", mime="text/csv") 
