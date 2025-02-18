@@ -61,8 +61,7 @@ df.head(2)
 df['b_runs'] = (df['runs_off_bat'] + df['wides'].fillna(0) + df['noballs'].fillna(0))
 df.head(2)
 
-(df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 
-'CV Varun': 'Varun Chakaravarthy'}, inplace=True))
+df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy'}, inplace=True)
 
 # Function to calculate batting average (BAV)
 def BAV(runs, outs):
