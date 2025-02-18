@@ -160,16 +160,20 @@ with col2:
     bowler = st.selectbox("**Select Bowler:**", [''] + pcl, index=0)
 
 
+placeholder_sortby = "Select Sort Value (Optional)"
+placeholder_how = "Select How (Optional)"
 
 col3, col4 = st.columns([1, 1])
 
 with col3:
     st.markdown("Select Sort Value: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
-    sortby = st.selectbox("", [''] + srtb, index=0, label_visibility="collapsed")
+    sortby_options = [placeholder_sortby] + srtb
+    sortby = st.selectbox("", sortby_options, index=0, label_visibility="collapsed")
 
 with col4:
     st.markdown("Select How: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
-    how = st.selectbox("", [''] + srth, index=0, label_visibility="collapsed")
+    how_options = [placeholder_how] + srth
+    how = st.selectbox("", how_options, index=0, label_visibility="collapsed")
 
 
 # Submit button logic
