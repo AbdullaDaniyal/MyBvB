@@ -236,9 +236,9 @@ if advanced_search:
                 # Modify sorting if sortby and how are provided
                 if sortby and how:
                     if how == 'Ascending':
-                        df = df.sort_values(by=sortby, ascending=True).reset_index(drop=True)
+                        df = df.sort_values(by=[sortby,'Innings'], ascending=[True,False]).reset_index(drop=True)
                     elif how == 'Descending':
-                        df = df.sort_values(by=sortby, ascending=False).reset_index(drop=True)
+                        df = df.sort_values(by=[sortby,'Innings'], ascending=[False,True]).reset_index(drop=True)
                     else:
                         raise ValueError("Invalid value for 'how'. Choose 'Ascending' or 'Descending'.")
 
