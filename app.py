@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-st.title("Batter vs Bowler Match-Up in IPL")
+st.title("Batter vs Bowler Match-Ups in IPL")
 
 # Load the data from a CSV file
 df = pd.read_csv('all_matchesS.csv', low_memory=False)
