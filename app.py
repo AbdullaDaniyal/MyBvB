@@ -159,7 +159,7 @@ with col1:
 with col2:
     bowler = st.selectbox("**Select Bowler:**", [''] + pcl, index=0)
 
-advanced_search = st.checkbox("Click here for advanced search")
+advanced_search = st.checkbox("Click here for advanced options")
 
 if advanced_search:
     col3, col4 = st.columns([1, 1])
