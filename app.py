@@ -165,27 +165,26 @@ col3, col4 = st.columns([1, 1])
 
 with col3:
     st.markdown("Select Sort Value: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
-    sortby = st.selectbox("", [''] + srtb, index=0, label_visibility="collapsed")
+    sortby = st.selectbox("", [None] + srtb, index=0, label_visibility="collapsed")
 
 with col4:
     st.markdown("Select How: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
-    how = st.selectbox("", [''] + srth, index=0, label_visibility="collapsed")
+    how = st.selectbox("", [None] + srth, index=0, label_visibility="collapsed")
 
 
 # Submit button logic
 if st.button("Submit"):
     if batter == '' or bowler == '':
         st.warning("⚠️ Please select both a Batter and a Bowler before Submitting! 😊")
-    elif sortby != '' and how == '':  # Check if sortby is selected but how is empty
-        st.warning("⚠️ If you selected a Sort Value, then please select How. 😊")
-    elif sortby == '' and how != '':  # Check if sortby is selected but how is empty
-        st.warning("⚠️ If you selected a How, then please select Sort Value. 😊")
+    elif sortby != None and how == None:  # Check if sortby is selected but how is empty
+        st.warning("⚠️ If you selected a Sort Value, then please select How! 😊")
+    elif sortby == None and how != None:  # Check if sortby is selected but how is empty
+        st.warning("⚠️ If you selected How, then please select a Sort Value! 😊")
     else:
         st.subheader(f"{batter} vs {bowler} in IPL")
 
-
         # Define the function to display Batter vs Bowler stats
-        def BvB(df, batter, bowler, sortby='', how=''):
+        def BvB(df, batter, bowler, sortby=None, how=None):
             df = df.copy()
 
             # Filter the data for the specific batter and bowler
