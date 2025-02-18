@@ -358,6 +358,6 @@ else:
 
             st.table(BvB(df, Batter, Bowler, Groupby).hide(axis="index"))
 
-            final_df = BvB(df, Batter, Bowler, Groupby).data
-            csv = final_df.to_csv(index=False)
+            fial_df = BvB(df, Batter, Bowler, Groupby).data
+            csv = fial_df.to_csv(index=False)
             st.download_button("Download CSV", data=csv, file_name= Batter+"_vs_"+Bowler+"_IPL.csv", mime="text/csv") 
