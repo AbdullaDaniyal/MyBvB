@@ -49,8 +49,11 @@ df.head(2)
 df['total_runs'] = df['runs_off_bat'] + df['extras']
 df.head(2)
 
+df.rename(columns={'season': 'Year', 'venue':'Venue'}, inplace=True)
+
+
 # Select relevant columns for analysis
-df = df[['match_id', 'season', 'start_date', 'venue', 'innings', 'ball',
+df = df[['match_id', 'Year', 'start_date', 'Venue', 'innings', 'ball',
          'batting_team', 'bowling_team', 'striker', 'non_striker', 'bowler', 'wickets', 'total_runs',
          'runs_off_bat', 'extras', 'wides', 'noballs', 'byes', 'legbyes',
          'penalty', 'wicket_type', 'player_dismissed', 'other_wicket_type',
@@ -60,6 +63,16 @@ df.head(2)
 # Add extra columns for bowler's runs conceded (including wides and no-balls)
 df['b_runs'] = (df['runs_off_bat'] + df['wides'].fillna(0) + df['noballs'].fillna(0))
 df.head(2)
+
+def phase(ball):
+    if ball < 6:
+        return 'Powerplay'
+    elif ball < 15:
+        return 'Middle Overs'
+    else:
+        return 'Death Overs'
+
+df['Overs'] = df['ball'].apply(lambda x : phase(x))
 
 df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy', 'Z Khan': 'Zaheer Khan','JJ Bumrah':'Jasprit Bumrah'}, inplace=True)
 
@@ -75,6 +88,7 @@ btl = sorted(list(df['striker'].unique()))
 pcl = sorted(list(df['bowler'].unique()))
 srtb = list(['Innings', 'Runs', 'Balls', 'Outs', 'Dots', '4s', '6s', 'Strike Rate'])
 srth = list(['Descending', 'Ascending'])
+grpb = list(['Venue', 'Inning', 'Overs', 'Batter', 'Bowler'])
 
 # Apply custom CSS to style the app
 st.markdown("""
@@ -151,50 +165,54 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-col1, col2 = st.columns([1, 1])
+col1, col2, col3 = st.columns([1, 1, 1])
 
 with col1:
-    batter = st.selectbox("**Select Batter:**", [''] + btl, index=0)
+    Batter = st.selectbox("**Select Batter:**", [''] + btl, index=0)
 
 with col2:
-    bowler = st.selectbox("**Select Bowler:**", [''] + pcl, index=0)
+    Bowler = st.selectbox("**Select Bowler:**", [''] + pcl, index=0)
+
+with col3:
+    Groupby = st.selectbox("**Group By:**", ['Year'] + grpb, index=0)
+
 
 advanced_search = st.checkbox("Click here for advanced options")
 
 if advanced_search:
-    col3, col4 = st.columns([1, 1])
+    col4, col5 = st.columns([1, 1])
 
-    with col3:
+    with col4:
         # st.markdown("Select Sort Value: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
         sortby = st.selectbox("**Select Sort Value:**", [None] + srtb, index=0)
 
-    with col4:
+    with col5:
         # st.markdown("Select How: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
         how = st.selectbox("**Select How:**", [None] + srth, index=0)
 
 
 # Submit button logic
     if st.button("Submit"):
-        if batter == '' or bowler == '':
+        if Batter == '' or Bowler == '':
             st.warning("⚠️ Please select both a Batter and a Bowler before Submitting! 😊")
         elif sortby != None and how == None:  # Check if sortby is selected but how is empty
             st.warning("⚠️ If you selected a Sort Value, then please select How! 😊")
         elif sortby == None and how != None:  # Check if sortby is selected but how is empty
             st.warning("⚠️ If you selected How, then please select a Sort Value! 😊")
         else:
-            st.subheader(f"{batter} vs {bowler} in IPL")
+            st.subheader(f"{Batter} vs {Bowler} in IPL")
 
             # Define the function to display Batter vs Bowler stats
-            def BvB(df, batter, bowler, sortby=None, how=None):
+            def BvB(df, Batter, Bowler, Groupby, sortby=None, how=None):
                 df = df.copy()
 
-                # Filter the data for the specific batter and bowler
-                df = df[(df['striker'] == batter) & (df['bowler'] == bowler)]
+                df = df[(df['striker'] == Batter) & (df['bowler'] == Bowler)]
+                df.rename(columns={'striker': 'Batter', 'bowler': 'Bowler', 'innings': 'Inning'}, inplace=True)
 
                 # If there's no data for the specified batter and bowler, return a styled message
                 if df.empty:
                     df1 = pd.DataFrame({
-                        'Year': ['-'],
+                        Groupby: ['-'],
                         'Innings': ['-'],
                         'Runs': ['-'],
                         'Balls': ['-'],
@@ -205,7 +223,7 @@ if advanced_search:
                         'Strike Rate': ['-'],
                         'Avg': ['-']
                     }).style.set_caption('Not Faced Each Other').apply(
-                        lambda x: ['background-color: red']*len(x) if x.name == df1.index[-1] else ['']*len(x), axis=1)
+                        lambda x: ['background-color: red'] * len(x) if x.name == df1.index[-1] else [''] * len(x), axis=1)
 
                     return df1
 
@@ -214,114 +232,35 @@ if advanced_search:
                 df['four'] = df['runs_off_bat'].apply(lambda x: 1 if x == 4 else 0)
                 df['six'] = df['runs_off_bat'].apply(lambda x: 1 if x == 6 else 0)
 
-                # Group by season and calculate aggregates
-                rdf = pd.DataFrame(df.groupby('season')['runs_off_bat'].sum()).reset_index().rename(columns={'season': 'Year', 'runs_off_bat': 'Runs'})
-                bdf = pd.DataFrame(df.groupby('season')['ball'].count() - df.groupby('season')['wides'].count()).reset_index().rename(columns={'season': 'Year', 0: 'Balls'})
-                wdf = pd.DataFrame(df.groupby('season')['b_wkt'].sum()).reset_index().rename(columns={'season': 'Year', 'b_wkt': 'Outs'})
-                idf = pd.DataFrame(df.groupby('season')['match_id'].apply(lambda x: len(np.unique(x)))).reset_index().rename(columns={'season': 'Year', 'match_id': 'Innings'})
-                ddf = (pd.DataFrame(df.groupby('season')['dots'].sum() - df.groupby('season')['wides'].count())).reset_index().rename(columns={'season': 'Year', 0: 'Dots'})
-                fdf = pd.DataFrame(df.groupby('season')['four'].sum()).reset_index().rename(columns={'season': 'Year', 'four': '4s'})
-                sdf = pd.DataFrame(df.groupby('season')['six'].sum()).reset_index().rename(columns={'season': 'Year', 'six': '6s'})
+                rdf = df.groupby(Groupby)['runs_off_bat'].sum().reset_index().rename(columns={'runs_off_bat': 'Runs'})
+                bdf = (df.groupby(Groupby)['ball'].count() - df.groupby(Groupby)['wides'].count()).reset_index().rename(columns={0: 'Balls'})
+                wdf = df.groupby(Groupby)['b_wkt'].sum().reset_index().rename(columns={'b_wkt': 'Outs'})
+                idf = df.groupby(Groupby)['match_id'].nunique().reset_index().rename(columns={'match_id': 'Innings'})
+                ddf = (df.groupby(Groupby)['dots'].sum() - df.groupby(Groupby)['wides'].count()).reset_index().rename(columns={0: 'Dots'})
+                fdf = df.groupby(Groupby)['four'].sum().reset_index().rename(columns={'four': '4s'})
+                sdf = df.groupby(Groupby)['six'].sum().reset_index().rename(columns={'six': '6s'})
 
-                # Merge all the grouped dataframes
-                df = pd.merge(idf, rdf, on='Year').merge(bdf).merge(wdf).merge(ddf).merge(fdf).merge(sdf)
+                # Merge all grouped dataframes
+                df = idf.merge(rdf, on=Groupby).merge(bdf, on=Groupby).merge(wdf, on=Groupby).merge(ddf, on=Groupby).merge(fdf, on=Groupby).merge(sdf, on=Groupby)
 
-                # Calculate strike rate
-                df['Strike Rate'] = round(df['Runs'] / df['Balls'] * 100, 1)
+                # Calculate Strike Rate
+                df['Strike Rate'] = df.apply(lambda x: round(x['Runs'] / x['Balls'] * 100, 1) if x['Balls'] > 0 else '-', axis=1)
 
-                # Select relevant columns and calculate average
-                df = df[['Year', 'Innings', 'Runs', 'Balls', 'Outs', 'Dots', '4s', '6s', 'Strike Rate']]
+                # Calculate Batting Average
                 df['Avg'] = df.apply(lambda x: BAV(x['Runs'], x['Outs']), axis=1)
 
                 # Modify sorting if sortby and how are provided
                 if sortby and how:
                     if how == 'Ascending':
-                        df = df.sort_values(by=[sortby,'Innings'], ascending=[True,False]).reset_index(drop=True)
+                        df = df.sort_values(by=[sortby, 'Innings'], ascending=[True, False]).reset_index(drop=True)
                     elif how == 'Descending':
-                        df = df.sort_values(by=[sortby,'Innings'], ascending=[False,True]).reset_index(drop=True)
+                        df = df.sort_values(by=[sortby, 'Innings'], ascending=[False, True]).reset_index(drop=True)
                     else:
                         raise ValueError("Invalid value for 'how'. Choose 'Ascending' or 'Descending'.")
 
                 # Calculate totals for all seasons
                 totals = {
-                    'Year': 'Total',
-                    'Innings': df['Innings'].sum(),
-                    'Runs': df['Runs'].sum(),
-                    'Balls': df['Balls'].sum(),
-                    'Outs': df['Outs'].sum(),
-                    'Dots': df['Dots'].sum(),
-                    '4s': df['4s'].sum(),
-                    '6s': df['6s'].sum(),
-                    'Strike Rate': round(df['Runs'].sum() / df['Balls'].sum() * 100, 1) if df['Balls'].sum() > 0 else '-',
-                    'Avg': BAV(df['Runs'].sum(), df['Outs'].sum())
-                }
-
-                # Append totals row to the dataframe
-                totals_df = pd.DataFrame([totals])  # Create a DataFrame from the totals dictionary
-                df = pd.concat([df, totals_df], ignore_index=True)  #
-
-                # Return the final dataframe with results
-                df = df.style.set_caption('Download This Data Below :').format(
-            {'Strike Rate': '{:.1f}', 'Avg': lambda x: f'{x:.1f}' if isinstance(x, (int, float)) else '-'}
-        ).apply(lambda x: ['background-color: blue']*len(x) if x.name == df.index[-1] else [''] * len(x), axis=1)
-
-                return df
-
-            st.table(BvB(df, batter, bowler, sortby, how).hide(axis="index"))
-
-            final_df = BvB(df, batter, bowler, sortby, how).data
-            csv = final_df.to_csv(index=False)
-            st.download_button("Download CSV", data=csv, file_name=f"{batter}_vs_{bowler}_IPL.csv", mime="text/csv")
-
-else:
-    if st.button("Submit"):
-        if batter == '' or bowler == '':
-            st.warning("⚠️ Please select both a Batter and a Bowler before Submitting! 😊")
-        else:
-            st.subheader(f"{batter} vs {bowler} in IPL")
-
-            def BvB(df, batter, bowler):
-                df = df.copy()
-
-                df = df[(df['striker'] == batter) & (df['bowler'] == bowler)]
-
-                if df.empty:
-                    df1 = pd.DataFrame({
-                        'Year': ['-'],
-                        'Innings': ['-'],
-                        'Runs': ['-'],
-                        'Balls': ['-'],
-                        'Outs': ['-'],
-                        'Dots': ['-'],
-                        '4s': ['-'],
-                        '6s': ['-'],
-                        'Strike Rate': ['-'],
-                        'Avg': ['-']
-                    }).style.set_caption('Not Faced Each Other').apply(
-                        lambda x: ['background-color: red']*len(x) if x.name == df1.index[-1] else ['']*len(x), axis=1)
-                    
-                    return df1
-
-                df['dots'] = df['runs_off_bat'].apply(lambda x: 1 if x == 0 else 0)
-                df['four'] = df['runs_off_bat'].apply(lambda x: 1 if x == 4 else 0)
-                df['six'] = df['runs_off_bat'].apply(lambda x: 1 if x == 6 else 0)
-
-                rdf = pd.DataFrame(df.groupby('season')['runs_off_bat'].sum()).reset_index().rename(columns={'season': 'Year', 'runs_off_bat': 'Runs'})
-                bdf = pd.DataFrame(df.groupby('season')['ball'].count() - df.groupby('season')['wides'].count()).reset_index().rename(columns={'season': 'Year', 0: 'Balls'})
-                wdf = pd.DataFrame(df.groupby('season')['b_wkt'].sum()).reset_index().rename(columns={'season': 'Year', 'b_wkt': 'Outs'})
-                idf = pd.DataFrame(df.groupby('season')['match_id'].apply(lambda x: len(np.unique(x)))).reset_index().rename(columns={'season': 'Year', 'match_id': 'Innings'})
-                ddf = (pd.DataFrame(df.groupby('season')['dots'].sum()-df.groupby('season')['wides'].count())).reset_index().rename(columns={'season': 'Year', 0: 'Dots'})
-                fdf = pd.DataFrame(df.groupby('season')['four'].sum()).reset_index().rename(columns={'season': 'Year', 'four': '4s'})
-                sdf = pd.DataFrame(df.groupby('season')['six'].sum()).reset_index().rename(columns={'season': 'Year', 'six': '6s'})
-
-                df = pd.merge(idf, rdf, on='Year').merge(bdf).merge(wdf).merge(ddf).merge(fdf).merge(sdf)
-
-                df['Strike Rate'] = round(df['Runs'] / df['Balls'] * 100, 1)
-                df = df[['Year', 'Innings', 'Runs', 'Balls', 'Outs', 'Dots', '4s', '6s', 'Strike Rate']]
-                df['Avg'] = df.apply(lambda x: BAV(x['Runs'], x['Outs']), axis=1)
-
-                totals = {
-                    'Year': 'Total',
+                    Groupby: 'Total',
                     'Innings': df['Innings'].sum(),
                     'Runs': df['Runs'].sum(),
                     'Balls': df['Balls'].sum(),
@@ -335,15 +274,90 @@ else:
 
                 df = pd.concat([df, pd.DataFrame([totals])], ignore_index=True)
 
-
+                # Apply styles
                 df = df.style.set_caption('Download This Data Below:').format(
                     {'Strike Rate': '{:.1f}', 'Avg': lambda x: f'{x:.1f}' if isinstance(x, (int, float)) else '-'}
-                ).apply(lambda x: ['background-color: blue']*len(x) if x.name == df.index[-1] else [''] * len(x), axis=1)
+                ).apply(lambda x: ['background-color: blue'] * len(x) if x.name == df.index[-1] else [''] * len(x), axis=1)
 
                 return df
 
-            st.table(BvB(df, batter, bowler).hide(axis="index"))
+            st.table(BvB(df, Batter, Bowler, Groupby, sortby, how).hide(axis="index"))
 
-            final_df = BvB(df, batter, bowler).data
+            final_df = BvB(df, Batter, Bowler, Groupby, sortby, how).data
             csv = final_df.to_csv(index=False)
-            st.download_button("Download CSV", data=csv, file_name= batter+"_vs_"+bowler+"_IPL.csv", mime="text/csv") 
+            st.download_button("Download CSV", data=csv, file_name=f"{Batter}_vs_{Bowler}_IPL.csv", mime="text/csv")
+
+else:
+    if st.button("Submit"):
+        if Batter == '' or Bowler == '':
+            st.warning("⚠️ Please select both a Batter and a Bowler before Submitting! 😊")
+        else:
+            st.subheader(f"{Batter} vs {Bowler} in IPL")
+
+            def BvB(df, Batter, Bowler, Groupby):
+                df = df.copy()
+                df = df[(df['striker'] == Batter) & (df['bowler'] == Bowler)]
+                df.rename(columns={'striker': 'Batter', 'bowler': 'Bowler', 'innings':'Inning'}, inplace=True)
+
+                if df.empty:
+                    empty_df = pd.DataFrame({
+                        Groupby: ['-'],
+                        'Innings': ['-'],
+                        'Runs': ['-'],
+                        'Balls': ['-'],
+                        'Outs': ['-'],
+                        'Dots': ['-'],
+                        '4s': ['-'],
+                        '6s': ['-'],
+                        'Strike Rate': ['-'],
+                        'Avg': ['-']
+                    })
+                    empty_df = empty_df.style.set_caption('Not Faced Each Other').apply(
+                        lambda x: ['background-color: red'] * len(x) if x.name == 0 else [''] * len(x), axis=1
+                    )
+                    return empty_df
+
+                df['dots'] = df['runs_off_bat'].apply(lambda x: 1 if x == 0 else 0)
+                df['four'] = df['runs_off_bat'].apply(lambda x: 1 if x == 4 else 0)
+                df['six'] = df['runs_off_bat'].apply(lambda x: 1 if x == 6 else 0)
+
+                rdf = df.groupby(Groupby)['runs_off_bat'].sum().reset_index().rename(columns={'runs_off_bat': 'Runs'})
+                bdf = (df.groupby(Groupby)['ball'].count() - df.groupby(Groupby)['wides'].count()).reset_index().rename(columns={0: 'Balls'})
+                wdf = df.groupby(Groupby)['b_wkt'].sum().reset_index().rename(columns={'b_wkt': 'Outs'})
+                idf = df.groupby(Groupby)['match_id'].nunique().reset_index().rename(columns={'match_id': 'Innings'})
+                ddf = (df.groupby(Groupby)['dots'].sum() - df.groupby(Groupby)['wides'].count()).reset_index().rename(columns={0: 'Dots'})
+                fdf = df.groupby(Groupby)['four'].sum().reset_index().rename(columns={'four': '4s'})
+                sdf = df.groupby(Groupby)['six'].sum().reset_index().rename(columns={'six': '6s'})
+
+                df = idf.merge(rdf, on=Groupby).merge(bdf, on=Groupby).merge(wdf, on=Groupby).merge(ddf, on=Groupby).merge(fdf, on=Groupby).merge(sdf, on=Groupby)
+
+                df['Strike Rate'] = df.apply(lambda x: round(x['Runs'] / x['Balls'] * 100, 1) if x['Balls'] > 0 else '-', axis=1)
+                df['Avg'] = df.apply(lambda x: BAV(x['Runs'], x['Outs']), axis=1)
+
+                totals = {
+                    Groupby: 'Total',
+                    'Innings': df['Innings'].sum(),
+                    'Runs': df['Runs'].sum(),
+                    'Balls': df['Balls'].sum(),
+                    'Outs': df['Outs'].sum(),
+                    'Dots': df['Dots'].sum(),
+                    '4s': df['4s'].sum(),
+                    '6s': df['6s'].sum(),
+                    'Strike Rate': round(df['Runs'].sum() / df['Balls'].sum() * 100, 1) if df['Balls'].sum() > 0 else '-',
+                    'Avg': BAV(df['Runs'].sum(), df['Outs'].sum())
+                }
+
+                df = pd.concat([df, pd.DataFrame([totals])], ignore_index=True)
+
+                df = df.style.set_caption('Download This Data Below:').format(
+                    {'Strike Rate': '{:.1f}', 'Avg': lambda x: f'{x:.1f}' if isinstance(x, (int, float)) else '-'}
+                ).apply(lambda x: ['background-color: blue'] * len(x) if x.name == df.index[-1] else [''] * len(x), axis=1)
+
+                return df
+
+
+            st.table(BvB(df, Batter, Bowler, Groupby).hide(axis="index"))
+
+            final_df = BvB(df, Batter, Bowler, Groupby).data
+            csv = final_df.to_csv(index=False)
+            st.download_button("Download CSV", data=csv, file_name= Batter+"_vs_"+Bowler+"_IPL.csv", mime="text/csv") 
