@@ -184,21 +184,21 @@ if advanced_search:
 
     with col4:
         # st.markdown("Select Sort Value: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
-        sortby = st.selectbox("**Select Sort Value:**", [None] + srtb, index=0)
+        sortby = st.selectbox("**Sort Value:**", [None] + srtb, index=0)
 
     with col5:
         # st.markdown("Select How: <span style='color:green;'>(Optional)</span>", unsafe_allow_html=True)
-        how = st.selectbox("**Select How:**", [None] + srth, index=0)
+        how = st.selectbox("**Sort By:**", [None] + srth, index=0)
 
 
 # Submit button logic
     if st.button("Submit"):
         if Batter == '' or Bowler == '':
-            st.warning("⚠️ Please select both a Batter and a Bowler before Submitting! 😊")
+            st.warning("⚠️ Please select both Batter and Bowler before Submitting! 😊")
         elif sortby != None and how == None:  # Check if sortby is selected but how is empty
-            st.warning("⚠️ If you selected a Sort Value, then please select How! 😊")
+            st.warning("⚠️ If you selected a Sort Value, then please select Sort By! 😊")
         elif sortby == None and how != None:  # Check if sortby is selected but how is empty
-            st.warning("⚠️ If you selected How, then please select a Sort Value! 😊")
+            st.warning("⚠️ If you selected Sort By, then please select a Sort Value! 😊")
         else:
             st.subheader(f"{Batter} vs {Bowler} in IPL")
 
@@ -290,7 +290,7 @@ if advanced_search:
 else:
     if st.button("Submit"):
         if Batter == '' or Bowler == '':
-            st.warning("⚠️ Please select both a Batter and a Bowler before Submitting! 😊")
+            st.warning("⚠️ Please select both Batter and Bowler before Submitting! 😊")
         else:
             st.subheader(f"{Batter} vs {Bowler} in IPL")
 
