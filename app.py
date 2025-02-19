@@ -200,7 +200,7 @@ if advanced_search:
         elif sortby == None and how != None:  # Check if sortby is selected but how is empty
             st.warning("⚠️ If you selected Sort By, then please select a Sort Value! 😊")
         else:
-            st.write('--')
+            st.write('---')
             st.subheader(f"{Batter} vs {Bowler} in IPL")
 
             # Define the function to display Batter vs Bowler stats
