@@ -74,7 +74,7 @@ def phase(ball):
 
 df['Overs'] = df['ball'].apply(lambda x : phase(x))
 
-df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy', 'Z Khan': 'Zaheer Khan','JJ Bumrah':'Jasprit Bumrah', 'SA Yadav':'Suryakumar Yadav'}, inplace=True)
+df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy', 'Z Khan': 'Zaheer Khan','JJ Bumrah':'Jasprit Bumrah', 'SA Yadav':'Suryakumar Yadav', 'AC Gilchrist':'Adam Gilchrist'}, inplace=True)
 
 # Function to calculate batting average (BAV)
 def BAV(runs, outs):
