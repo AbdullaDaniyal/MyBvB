@@ -88,7 +88,7 @@ btl = sorted(list(df['striker'].unique()))
 pcl = sorted(list(df['bowler'].unique()))
 srtb = list(['Innings', 'Runs', 'Balls', 'Outs', 'Dots', '4s', '6s', 'Strike Rate'])
 srth = list(['Descending', 'Ascending'])
-grpb = list(['Venue', 'Inning', 'Overs', 'Batter', 'Bowler'])
+grpb = list(['Venue', 'Inning', 'Overs', 'Batting Team', 'Bowling Team', 'Batter', 'Bowler'])
 
 # Apply custom CSS to style the app
 st.markdown("""
@@ -209,7 +209,7 @@ if advanced_search:
                     df = df.copy()
 
                     df = df[(df['striker'] == Batter) & (df['bowler'] == Bowler)]
-                    df.rename(columns={'striker': 'Batter', 'bowler': 'Bowler', 'innings': 'Inning'}, inplace=True)
+                    df.rename(columns={'striker': 'Batter', 'bowler': 'Bowler', 'innings': 'Inning', 'batting_team':'Batting Team', 'bowling_team':'Bowling Team'}, inplace=True)
 
                     # If there's no data for the specified batter and bowler, return a styled message
                     if df.empty:
@@ -301,7 +301,7 @@ else:
                 def BvB(df, Batter, Bowler, Groupby):
                     df = df.copy()
                     df = df[(df['striker'] == Batter) & (df['bowler'] == Bowler)]
-                    df.rename(columns={'striker': 'Batter', 'bowler': 'Bowler', 'innings':'Inning'}, inplace=True)
+                    df.rename(columns={'striker': 'Batter', 'bowler': 'Bowler', 'innings': 'Inning', 'batting_team':'Batting Team', 'bowling_team':'Bowling Team'}, inplace=True)
 
                     if df.empty:
                         empty_df = pd.DataFrame({
