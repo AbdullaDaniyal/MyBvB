@@ -74,7 +74,7 @@ def phase(ball):
 
 df['Overs'] = df['ball'].apply(lambda x : phase(x))
 
-df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy', 'Z Khan': 'Zaheer Khan','JJ Bumrah':'Jasprit Bumrah', 'SA Yadav':'Suryakumar Yadav', 'AC Gilchrist':'Adam Gilchrist', 'Green Park':'Green Park, Kanpur', 'Saurashtra Cricket Association Stadium':'Saurashtra Cricket Association Stadium, Rajkot', 'SK Raina':'Suresh Raina', 'UT Yadav':'Umesh Yadav', 'Wankhede Stadium':'Wankhede Stadium, Mumbai', 'HH Pandya':'Hardik Pandya', 'KH Pandya':'Krunal Pandya', 'DL Chahar':'Deepak Chahar', 'RD Chahar':'Rahul Chahar', 'R Ravindra':'Rachin Ravindra', 'GJ Maxwell':'Glenn Maxwell', 'YS Chahal':'Yuzvendra Chahal', 'KA Pollard':'Kieron Pollard', 'MA Starc':'Mitchell Starc', 'A Kumble':'Anil Kumble', 'SK Warne':'Shane Warne', 'SR Watson':'Shane Watson', 'BCJ Cutting':'Ben Cutting', 'PJ Cummins':'Pat Cummins'}, inplace=True)
+df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy', 'Z Khan': 'Zaheer Khan','JJ Bumrah':'Jasprit Bumrah', 'SA Yadav':'Suryakumar Yadav', 'AC Gilchrist':'Adam Gilchrist', 'Green Park':'Green Park, Kanpur', 'Saurashtra Cricket Association Stadium':'Saurashtra Cricket Association Stadium, Rajkot', 'SK Raina':'Suresh Raina', 'UT Yadav':'Umesh Yadav', 'Wankhede Stadium':'Wankhede Stadium, Mumbai', 'HH Pandya':'Hardik Pandya', 'KH Pandya':'Krunal Pandya', 'DL Chahar':'Deepak Chahar', 'RD Chahar':'Rahul Chahar'}, inplace=True)
 
 # Function to calculate batting average (BAV)
 def BAV(runs, outs):
@@ -147,12 +147,12 @@ st.markdown("""
         vertical-align: middle;
     }
 
-    /* Sticky header */
+    /* Sticky header and no-overflow */
     .stTable thead {
         position: sticky;
         top: 0;
         background-color: #333;
-        z-index: 5;
+        z-index: 1;
     }
 
     /* Adjust column widths and prevent wrapping */
@@ -162,39 +162,8 @@ st.markdown("""
         overflow: hidden;
         text-align: center !important; /* Force center alignment for content */
     }
-
-    /* Freeze the first column */
-    /* Header cells get a higher z-index so they remain on top */
-    .stTable thead th:first-child {
-        position: sticky;
-        left: 0;
-        background-color: #333;
-        z-index: 6;
-    }
-    .stTable tbody td:first-child {
-        position: sticky;
-        left: 0;
-        background-color: inherit; /* or set a fixed color if desired */
-        z-index: 4;
-    }
-
-    /* Freeze the second column */
-    /* Adjust the left value (e.g., 100px) to match the width of the first column */
-    .stTable thead th:nth-child(2) {
-        position: sticky;
-        left: 100px; /* Change this value to your first column's width */
-        background-color: #333;
-        z-index: 6;
-    }
-    .stTable tbody td:nth-child(2) {
-        position: sticky;
-        left: 100px; /* Ensure it aligns with header */
-        background-color: inherit;
-        z-index: 5;
-    }
     </style>
 """, unsafe_allow_html=True)
-
 
 col1, col2, col3 = st.columns([1, 1, 1])
 
