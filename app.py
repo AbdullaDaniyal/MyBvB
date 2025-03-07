@@ -162,8 +162,28 @@ st.markdown("""
         overflow: hidden;
         text-align: center !important; /* Force center alignment for content */
     }
+
+    /* Freeze the first column */
+    .stTable thead th:nth-child(1),
+    .stTable tbody td:nth-child(1) {
+        position: sticky;
+        left: 0;
+        background-color: #333; /* Adjust background if needed */
+        z-index: 2; /* Ensure it stays on top */
+    }
+
+    /* Freeze the second column */
+    /* Adjust the left value (e.g., 100px) to match the width of the first column */
+    .stTable thead th:nth-child(2),
+    .stTable tbody td:nth-child(2) {
+        position: sticky;
+        left: 100px; /* Change this value to your first column's width */
+        background-color: #333; /* Ensure consistent background */
+        z-index: 2;
+    }
     </style>
 """, unsafe_allow_html=True)
+
 
 col1, col2, col3 = st.columns([1, 1, 1])
 
