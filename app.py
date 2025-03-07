@@ -74,7 +74,7 @@ def phase(ball):
 
 df['Overs'] = df['ball'].apply(lambda x : phase(x))
 
-df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy', 'Z Khan': 'Zaheer Khan','JJ Bumrah':'Jasprit Bumrah', 'SA Yadav':'Suryakumar Yadav', 'AC Gilchrist':'Adam Gilchrist', 'Green Park':'Green Park, Kanpur', 'Saurashtra Cricket Association Stadium':'Saurashtra Cricket Association Stadium, Rajkot', 'SK Raina':'Suresh Raina', 'UT Yadav':'Umesh Yadav', 'Wankhede Stadium':'Wankhede Stadium, Mumbai', 'HH Pandya':'Hardik Pandya', 'KH Pandya':'Krunal Pandya', 'DL Chahar':'Deepak Chahar', 'RD Chahar':'Rahul Chahar'}, inplace=True)
+df.replace({'RG Sharma': 'Rohit Sharma', 'V Kohli': 'Virat Kohli', 'SR Tendulkar':'Sachin Tendulkar', 'CV Varun': 'Varun Chakaravarthy', 'Z Khan': 'Zaheer Khan','JJ Bumrah':'Jasprit Bumrah', 'SA Yadav':'Suryakumar Yadav', 'AC Gilchrist':'Adam Gilchrist', 'Green Park':'Green Park, Kanpur', 'Saurashtra Cricket Association Stadium':'Saurashtra Cricket Association Stadium, Rajkot', 'SK Raina':'Suresh Raina', 'UT Yadav':'Umesh Yadav', 'Wankhede Stadium':'Wankhede Stadium, Mumbai', 'HH Pandya':'Hardik Pandya', 'KH Pandya':'Krunal Pandya', 'DL Chahar':'Deepak Chahar', 'RD Chahar':'Rahul Chahar', 'R Ravindra':'Rachin Ravindra', 'BCJ Cutting':'Ben Cutting', 'KA Pollard':'Kieron Pollard'}, inplace=True)
 
 # Function to calculate batting average (BAV)
 def BAV(runs, outs):
