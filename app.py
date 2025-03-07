@@ -147,12 +147,12 @@ st.markdown("""
         vertical-align: middle;
     }
 
-    /* Sticky header and no-overflow */
+    /* Sticky header */
     .stTable thead {
         position: sticky;
         top: 0;
         background-color: #333;
-        z-index: 1;
+        z-index: 5;
     }
 
     /* Adjust column widths and prevent wrapping */
@@ -164,22 +164,33 @@ st.markdown("""
     }
 
     /* Freeze the first column */
-    .stTable thead th:nth-child(1),
-    .stTable tbody td:nth-child(1) {
+    /* Header cells get a higher z-index so they remain on top */
+    .stTable thead th:first-child {
         position: sticky;
         left: 0;
-        background-color: #333; /* Adjust background if needed */
-        z-index: 2; /* Ensure it stays on top */
+        background-color: #333;
+        z-index: 6;
+    }
+    .stTable tbody td:first-child {
+        position: sticky;
+        left: 0;
+        background-color: inherit; /* or set a fixed color if desired */
+        z-index: 4;
     }
 
     /* Freeze the second column */
     /* Adjust the left value (e.g., 100px) to match the width of the first column */
-    .stTable thead th:nth-child(2),
-    .stTable tbody td:nth-child(2) {
+    .stTable thead th:nth-child(2) {
         position: sticky;
         left: 100px; /* Change this value to your first column's width */
-        background-color: #333; /* Ensure consistent background */
-        z-index: 2;
+        background-color: #333;
+        z-index: 6;
+    }
+    .stTable tbody td:nth-child(2) {
+        position: sticky;
+        left: 100px; /* Ensure it aligns with header */
+        background-color: inherit;
+        z-index: 5;
     }
     </style>
 """, unsafe_allow_html=True)
